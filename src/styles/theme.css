@@ -1,0 +1,310 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  --background: #070707;
+  --foreground: #ffffff;
+  --card: rgba(18, 18, 18, 0.85);
+  --card-foreground: #ffffff;
+  --popover: #121212;
+  --popover-foreground: #ffffff;
+  --primary: #facc15;
+  --primary-foreground: #0a0a0a;
+  --secondary: rgba(26, 26, 26, 0.7);
+  --secondary-foreground: #cbd5e1;
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: #a3a3a3;
+  --accent: #fcbe11;
+  --accent-foreground: #0a0a0a;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #2e2e2e;
+  --input: transparent;
+  --input-background: #121212;
+  --switch-background: #475569;
+  --font-weight-medium: 600;
+  --font-weight-normal: 400;
+  --ring: #facc15;
+  --chart-1: #facc15;
+  --chart-2: #fcbe11;
+  --chart-3: #22c55e;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+  --radius: 4px;
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #facc15;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #1c1c1c;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2e2e2e;
+  --sidebar-ring: #facc15;
+}
+
+.dark {
+  --background: #050505;
+  --foreground: #ffffff;
+  --card: rgba(14, 14, 14, 0.9);
+  --card-foreground: #ffffff;
+  --popover: #0e0e0e;
+  --popover-foreground: #ffffff;
+  --primary: #facc15;
+  --primary-foreground: #050505;
+  --secondary: rgba(20, 20, 20, 0.8);
+  --secondary-foreground: #cbd5e1;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #a3a3a3;
+  --accent: #fcbe11;
+  --accent-foreground: #050505;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #2a2a2a;
+  --input: rgba(255, 255, 255, 0.04);
+  --input-background: #0e0e0e;
+  --ring: #facc15;
+  --font-weight-medium: 600;
+  --font-weight-normal: 400;
+  --chart-1: #facc15;
+  --chart-2: #fcbe11;
+  --chart-3: #22c55e;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+  --sidebar: #050505;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #facc15;
+  --sidebar-primary-foreground: #050505;
+  --sidebar-accent: rgba(20, 20, 20, 0.8);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #facc15;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html, body {
+    @apply bg-background text-foreground;
+    font-family: 'Clash Display', sans-serif;
+    cursor: url('../imports/cursor_nav.png') 2 2, auto;
+  }
+
+  a, button, [role="button"], input[type="submit"], input[type="button"], select, .cursor-pointer, [class*="cursor-pointer"], [onclick], input[type="range"], [tabindex] {
+    cursor: url('../imports/cursor_click.png') 2 2, pointer !important;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Cabinet Grotesk', sans-serif;
+  }
+
+  .font-azymar-logo {
+    font-family: 'Switzer', sans-serif !important;
+  }
+
+  .font-cabinet {
+    font-family: 'Cabinet Grotesk', sans-serif !important;
+  }
+
+  .font-clash {
+    font-family: 'Clash Display', sans-serif !important;
+  }
+
+  /**
+  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
+  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
+  */
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: 900;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: 900;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: 900;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: 800;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+}
+
+@utility glass-panel {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+@utility neon-glow {
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+@utility neon-text-glow {
+  text-shadow: 1px 1px 0px var(--primary);
+}
+
+@utility border-glow {
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+@utility neo-border {
+  border: 3px solid #000000;
+}
+
+@utility neo-border-sm {
+  border: 2px solid #000000;
+}
+
+@utility neo-shadow {
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+@utility neo-shadow-lg {
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+
+@utility neo-shadow-primary {
+  box-shadow: 4px 4px 0px 0px var(--primary);
+}
+
+@utility neo-text-stroke {
+  text-shadow: 2px 2px 0px #000000;
+}
+
+@utility neo-text-stroke-lg {
+  text-shadow: 4px 4px 0px #000000;
+}
+
+@utility neo-box {
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  background-color: var(--card);
+}
+
+@utility neo-btn {
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility neo-btn-hover {
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #000000;
+  }
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px #000000;
+  }
+}
+
+@utility neo-card-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  &:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 8px 8px 0px 0px #000000;
+    border-color: var(--primary);
+  }
+}
+
+@utility neo-grid-bg {
+  background-color: #ffffff;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.1) 2px, transparent 2px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 2px, transparent 2px);
+  background-size: 40px 40px;
+}
+
+@utility neo-grid-dark {
+  background-color: #000000;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.08) 2px, transparent 2px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 2px, transparent 2px);
+  background-size: 40px 40px;
+}
+
+
+
