@@ -4,7 +4,7 @@ import {
   Search, Bell, Moon, Sun, Menu, X, Star, Heart,
   Play, ChevronLeft, ChevronRight, Zap, Flame, Sparkles,
   Gamepad2, Trophy, Users, Clock, Share2, Maximize2,
-  ArrowRight, Mail, Github, Twitter, Instagram, Linkedin,
+  ArrowRight, Mail, Twitter, Instagram, Linkedin,
   MessageCircle, Shield, HelpCircle, BookOpen, Layers,
   Car, Compass, Puzzle, Swords, Music, Ghost,
   Building2, Globe, Joystick, Upload, ShieldCheck,
@@ -1165,10 +1165,6 @@ function LegalModal({
           heading: "3. Information Security",
           text: "We implement industry-standard encryption and security measures. Since your account is powered by Supabase, authentication is protected by secure token exchange. We never share or sell your personal details to third parties.",
         },
-        {
-          heading: "4. Contact Us",
-          text: "For queries regarding your personal data or account deletion, reach out to us at privacy@azymar.com.",
-        },
       ],
     },
     terms: {
@@ -1180,15 +1176,11 @@ function LegalModal({
           text: "By accessing or playing games on the AZYMAR platform, you agree to comply with and be bound by these Terms of Service. If you disagree with any part, you must refrain from using the platform.",
         },
         {
-          heading: "2. Game Publishing Rules",
-          text: "When uploading custom game packages (.zip files) via the Admin Panel, you guarantee that you own or possess the rights to publish the intellectual property. Uploads must not contain malware, spyware, offensive content, or violate any copyrights.",
-        },
-        {
-          heading: "3. Account Termination",
+          heading: "2. Account Termination",
           text: "We reserve the right to remove any uploaded games or terminate accounts that breach copyright rules, distribute malicious code, or degrade the platform experience without prior notice.",
         },
         {
-          heading: "4. Disclaimer & Limitations",
+          heading: "3. Disclaimer & Limitations",
           text: "AZYMAR platform and hosted games are provided 'as is' without warranty of any kind. We are not liable for data loss, browser crash, score reset, or system damages resulting from game executions.",
         },
       ],
@@ -1221,7 +1213,7 @@ function LegalModal({
       paragraphs: [
         {
           heading: "Our Mission",
-          text: "AZYMAR STUDIO is a premium independent gaming sandbox. We build interactive tools that enable indie creators and retro gamers to host, publish, and enjoy web-based HTML5 games instantly.",
+          text: "AZYMAR STUDIO is a independant gaming studio.We build interactive tools that enable indie creators and retro gamer to host,publish,and enjoy games instantly",
         },
         {
           heading: "Zero-Install Instant Play",
@@ -1242,10 +1234,6 @@ function LegalModal({
           text: "Simply browse our catalog, click on any game card, and hit 'Play Now' or 'Play Free'. The game will launch instantly in our high-performance in-browser container. No installations or downloads are required.",
         },
         {
-          heading: "Q: Can I upload my own custom games?",
-          text: "Absolutely! Admin users can unlock the Admin Panel and publish custom HTML5 game packages bundled as a standard .zip file (the zip must contain an index.html at its root).",
-        },
-        {
           heading: "Q: Is AZYMAR free to use?",
           text: "Yes! All games hosted on the AZYMAR playground are 100% free to play. We are committed to keeping web-based gaming open and accessible to all.",
         },
@@ -1261,15 +1249,15 @@ function LegalModal({
       paragraphs: [
         {
           heading: "Email Support",
-          text: "For general inquiries, bug reports, publisher questions, or feedback, send an email to: azymar03@gmmail.com. We typically respond within 24-48 hours.",
+          text: "For general inquiries, bug reports, publisher questions, or feedback, send an email to: azymar03@gmail.com. We typically respond within 24-48 hours.",
         },
         {
           heading: "Official Discord Community",
-          text: "Join our active community on Discord to discuss games, report issues, and chat directly with developers at: https://discord.com/channels/1523952210780880936/1523952211225215079",
+          text: "Join our active community on Discord to discuss games, report issues, and chat directly with developers at: https://discord.gg/dnAXsrr8A",
         },
         {
           heading: "Mailing Address",
-          text: "AZYMAR STUDIO, Bangalore, India.",
+          text: "AZYMAR,salem,Tamilnadu,India",
         },
       ],
     },
@@ -2865,7 +2853,6 @@ export default function App() {
                     </svg>
                   ), label: "X", url: "https://x.com/azymar03" },
                   { icon: Instagram, label: "Instagram", url: "https://www.instagram.com/azymar_studio_01?igsh=dngzeW16Y29kZDJ4" },
-                  { icon: Github, label: "GitHub", url: "https://github.com/azymar03-ux" },
                 ].map((s) => (
                   <motion.a
                     key={s.label}
