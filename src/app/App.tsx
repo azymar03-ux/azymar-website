@@ -1780,6 +1780,17 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.ctrlKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        navigateTo("signin");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   // Auth Guard
   useEffect(() => {
     if (currentPage === "account" && !user) {
@@ -2392,7 +2403,7 @@ export default function App() {
 
       {/* ── Navbar ─────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 bg-background/60 backdrop-blur-md border-b border-border">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <nav className="relative max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           {/* Logo */}
           <a 
             href="#" 
@@ -2408,7 +2419,7 @@ export default function App() {
           </a>
 
           {/* Nav links – desktop */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => (
               <button
                 key={link}
@@ -2529,16 +2540,7 @@ export default function App() {
                   Sign Out
                 </motion.button>
               </div>
-            ) : (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigateTo("signin")}
-                className="px-5 py-2 bg-primary text-primary-foreground rounded-[2px] text-xs font-black uppercase tracking-wider hover:bg-white hover:text-black transition-colors hidden sm:flex items-center gap-1.5 cursor-pointer"
-              >
-                <Gamepad2 size={15} /> Sign In
-              </motion.button>
-            )}
+            ) : null}
 
             {adminUnlocked && (
               <motion.button
@@ -2592,12 +2594,6 @@ export default function App() {
                     {link}
                   </button>
                 ))}
-                <button
-                  onClick={() => { setShowLogin(true); setMobileMenu(false); }}
-                  className="mt-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-[2px] text-xs font-black uppercase tracking-wider"
-                >
-                  Sign In
-                </button>
               </div>
             </motion.div>
           )}
