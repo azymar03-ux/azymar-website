@@ -571,7 +571,7 @@ function AdminPanel({
   onToggleVisible: (id: number, isDbGame: boolean) => void;
   onDelete: (id: number, isDbGame: boolean) => void;
   onClose: () => void;
-  onEditGame?: (id: number, isDbGame: boolean, updatedFields: { title: string; genre: string; thumbnailFile?: File | null }) => Promise<void>;
+  onEditGame?: (id: number, isDbGame: boolean, updatedFields: { title: string; genre: string; thumbnailFile?: File | null; gameFile?: File | null }) => Promise<void>;
 }) {
   const [dragging, setDragging] = useState(false);
   const [draggingThumbnail, setDraggingThumbnail] = useState(false);
@@ -596,6 +596,9 @@ function AdminPanel({
   const [editThumbnailPreview, setEditThumbnailPreview] = useState<string | null>(null);
   const editThumbnailInputRef = useRef<HTMLInputElement>(null);
   const [draggingEditThumbnail, setDraggingEditThumbnail] = useState(false);
+  const [editGameFile, setEditGameFile] = useState<File | null>(null);
+  const [draggingEditGame, setDraggingEditGame] = useState(false);
+  const editGameInputRef = useRef<HTMLInputElement>(null);
   const [loadingEdit, setLoadingEdit] = useState(false);
 
   useEffect(() => {
@@ -606,6 +609,7 @@ function AdminPanel({
       });
       setEditThumbnail(null);
       setEditThumbnailPreview(editingItem.thumbnailUrl);
+      setEditGameFile(null);
     }
   }, [editingItem]);
 
@@ -827,6 +831,58 @@ function AdminPanel({
                     )}
                   </div>
                 </div>
+
+                {/* Game File dropzone */}
+                <div>
+                  <label className="text-xs font-black uppercase tracking-wider block mb-1.5">Update Game Files (.zip)</label>
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setDraggingEditGame(true); }}
+                    onDragLeave={() => setDraggingEditGame(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDraggingEditGame(false);
+                      const file = e.dataTransfer.files[0];
+                      if (file) {
+                        if (!file.name.endsWith(".zip")) { toast.error("Only .zip files are supported"); return; }
+                        setEditGameFile(file);
+                      }
+                    }}
+                    onClick={() => editGameInputRef.current?.click()}
+                    className={`border-3 border-dashed rounded-none p-6 flex items-center justify-center gap-3 cursor-pointer transition-all ${
+                      draggingEditGame 
+                        ? "border-primary bg-primary/10" 
+                        : "border-black bg-white text-black hover:border-primary transition-colors"
+                    }`}
+                  >
+                    <input
+                      ref={editGameInputRef}
+                      type="file"
+                      accept=".zip"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          if (!file.name.endsWith(".zip")) { toast.error("Only .zip files are supported"); return; }
+                          setEditGameFile(file);
+                        }
+                      }}
+                    />
+                    {editGameFile ? (
+                      <div className="flex flex-col items-center justify-center text-black w-full text-center">
+                        <p className="font-bold text-xs uppercase truncate w-full px-4">{editGameFile.name}</p>
+                        <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                          {formatBytes(editGameFile.size)} · Click to replace
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="text-center py-4 flex flex-col items-center justify-center">
+                        <Upload size={24} className="text-neutral-500 mb-1" />
+                        <p className="font-bold text-xs uppercase">Drag & drop .zip file or click to browse</p>
+                        <p className="text-[10px] text-neutral-500 font-semibold mt-0.5">Leave blank to keep existing files</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -850,6 +906,7 @@ function AdminPanel({
                       title: editForm.title,
                       genre: editForm.genre,
                       thumbnailFile: editThumbnail,
+                      gameFile: editGameFile,
                     });
                     setEditingItem(null);
                   } catch (err: any) {
@@ -2194,16 +2251,20 @@ export default function App() {
   const handleEditGame = async (
     id: number,
     isDbGame: boolean,
-    updatedFields: { title: string; genre: string; thumbnailFile?: File | null }
+    updatedFields: { title: string; genre: string; thumbnailFile?: File | null; gameFile?: File | null }
   ) => {
     const toastId = toast.loading(`Updating "${updatedFields.title}"...`);
     try {
       let nextThumbnailUrl: string | undefined = undefined;
+      let nextZipUrl: string | undefined = undefined;
 
       if (isDbGame) {
         if (!supabase) {
           if (updatedFields.thumbnailFile) {
             nextThumbnailUrl = URL.createObjectURL(updatedFields.thumbnailFile);
+          }
+          if (updatedFields.gameFile) {
+            nextZipUrl = URL.createObjectURL(updatedFields.gameFile);
           }
           setRemoteGames((prev) =>
             prev.map((g) =>
@@ -2213,6 +2274,7 @@ export default function App() {
                     title: updatedFields.title,
                     genre: updatedFields.genre,
                     ...(nextThumbnailUrl ? { thumbnailUrl: nextThumbnailUrl } : {}),
+                    ...(nextZipUrl ? { zipUrl: nextZipUrl } : {}),
                   }
                 : g
             )
@@ -2235,12 +2297,28 @@ export default function App() {
           nextThumbnailUrl = thumbPublicData?.publicUrl || "";
         }
 
+        if (updatedFields.gameFile) {
+          const filePath = `${updatedFields.title.replace(/\s+/g, "_")}_${Date.now()}.zip`;
+          const { data: storageData, error: storageError } = await supabase.storage
+            .from('game-files')
+            .upload(filePath, updatedFields.gameFile);
+
+          if (storageError) {
+            throw new Error(`Game file upload failed: ${storageError.message}`);
+          }
+          const { data: publicData } = supabase.storage.from('game-files').getPublicUrl(filePath);
+          nextZipUrl = publicData?.publicUrl || "";
+        }
+
         const updateData: any = {
           title: updatedFields.title,
           genre: updatedFields.genre,
         };
         if (nextThumbnailUrl) {
           updateData.thumbnail_url = nextThumbnailUrl;
+        }
+        if (nextZipUrl) {
+          updateData.zip_url = nextZipUrl;
         }
 
         const { error: dbError } = await supabase
@@ -2258,6 +2336,7 @@ export default function App() {
                   title: updatedFields.title,
                   genre: updatedFields.genre,
                   ...(nextThumbnailUrl ? { thumbnailUrl: nextThumbnailUrl } : {}),
+                  ...(nextZipUrl ? { zipUrl: nextZipUrl } : {}),
                 }
               : g
           )
@@ -2275,6 +2354,7 @@ export default function App() {
                   title: updatedFields.title,
                   genre: updatedFields.genre,
                   ...(nextThumbnailUrl ? { thumbnailUrl: nextThumbnailUrl } : {}),
+                  ...(updatedFields.gameFile ? { file: updatedFields.gameFile } : {}),
                 }
               : u
           )
