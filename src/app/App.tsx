@@ -127,11 +127,7 @@ function GameCard({
             {game.emoji}
           </motion.span>
         )}
-        {game.isUploaded && (
-          <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#00D4C8] text-black text-[9px] font-black px-2 py-0.5 border-2 border-black rounded-none">
-            <Upload size={8} /> CUSTOM
-          </div>
-        )}
+
         {!game.isUploaded && game.badge && (
           <div className="absolute top-2 left-2">
             <Badge type={game.badge} />
