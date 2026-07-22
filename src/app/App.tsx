@@ -2364,6 +2364,31 @@ export default function App() {
   };
 
   const handlePlayGame = async (game: Game) => {
+    // Increment plays locally
+    const currentPlaysStr = typeof game.plays === 'string' ? game.plays : String(game.plays || '0');
+    let currentPlays = parseInt(currentPlaysStr.replace(/[^0-9]/g, ''), 10) || 0;
+    
+    // Handle 'K' or 'M' suffixes if they exist
+    if (currentPlaysStr.toUpperCase().includes('K')) currentPlays *= 1000;
+    if (currentPlaysStr.toUpperCase().includes('M')) currentPlays *= 1000000;
+    
+    const nextPlaysStr = String(currentPlays + 1);
+
+    setRemoteGames((prev) =>
+      prev.map((g) => (g.id === game.id ? { ...g, plays: nextPlaysStr } : g))
+    );
+
+    // Update in Supabase (background)
+    if (supabase && (game.isUploaded || (game as any).zipUrl !== undefined)) {
+      supabase
+        .from('games')
+        .update({ plays: nextPlaysStr })
+        .eq('id', game.id)
+        .then(({ error }) => {
+          if (error) console.error("Failed to update play count:", error);
+        });
+    }
+
     if ((game.isUploaded || (game as any).zipUrl) && (game as any).zipUrl) {
       const toastId = toast.loading(`Loading "${game.title}"...`);
       try {
