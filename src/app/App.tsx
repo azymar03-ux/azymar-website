@@ -33,6 +33,7 @@ interface Game {
   title: string;
   genre: string;
   rating: number;
+  ratingCount?: number;
   plays: string;
   badge?: "HOT" | "NEW" | "TRENDING";
   color: string;
@@ -1747,6 +1748,46 @@ function AccountView({
   );
 }
 
+function RatingModal({
+  game,
+  onClose,
+  onSubmit
+}: {
+  game: Game;
+  onClose: () => void;
+  onSubmit: (gameId: number, rating: number) => void;
+}) {
+  const [hovered, setHovered] = useState(0);
+  const [selected, setSelected] = useState(0);
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} className="bg-card border-3 border-black p-8 max-w-sm w-full neo-shadow-lg flex flex-col items-center">
+        <h2 className="font-black text-2xl uppercase mb-2 text-center">Rate {game.title}</h2>
+        <p className="text-sm font-bold text-neutral-600 mb-6 uppercase text-center">How was the game?</p>
+        <div className="flex gap-2 mb-8">
+          {[1,2,3,4,5].map(star => (
+            <Star
+              key={star}
+              size={40}
+              className={`cursor-pointer transition-colors ${
+                star <= (hovered || selected) ? "fill-amber-400 text-amber-400" : "text-neutral-300"
+              }`}
+              onMouseEnter={() => setHovered(star)}
+              onMouseLeave={() => setHovered(0)}
+              onClick={() => setSelected(star)}
+            />
+          ))}
+        </div>
+        <div className="flex gap-4 w-full">
+          <button onClick={onClose} className="flex-1 py-3 border-3 border-black font-black uppercase text-sm hover:bg-neutral-100 transition-colors neo-btn">Skip</button>
+          <button onClick={() => { if (selected) { onSubmit(game.id, selected); onClose(); } }} className={`flex-1 py-3 border-3 border-black font-black uppercase text-sm transition-colors neo-btn ${selected ? "bg-primary hover:bg-[#00D4C8]" : "bg-neutral-300 cursor-not-allowed opacity-50"}`}>Submit</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
   const [logoState, setLogoState] = useState<"logo" | "triangle" | "circle" | "x" | "square">("logo");
@@ -1796,7 +1837,41 @@ export default function App() {
   const [loadingGames, setLoadingGames] = useState(false);
   const [activePlayUrl, setActivePlayUrl] = useState<string | null>(null);
   const [playingGame, setPlayingGame] = useState<Game | null>(null);
+  const [gameToRate, setGameToRate] = useState<Game | null>(null);
   const [user, setUser] = useState<any>(null);
+
+  const handleSubmitRating = async (gameId: number, rating: number) => {
+    let newRating = rating;
+    let newCount = 1;
+
+    setRemoteGames(prev => prev.map(g => {
+      if (g.id === gameId) {
+        const currentCount = g.ratingCount || 1;
+        const currentTotal = g.rating * currentCount;
+        newCount = currentCount + 1;
+        newRating = Number(((currentTotal + rating) / newCount).toFixed(1));
+        return { ...g, rating: newRating, ratingCount: newCount };
+      }
+      return g;
+    }));
+
+    if (supabase) {
+      try {
+        // Try updating both rating and rating_count
+        const { error } = await supabase.from('games').update({ rating: newRating, rating_count: newCount }).eq('id', gameId);
+        if (error) {
+          // If rating_count column does not exist, fallback to just updating rating
+          const { error: fallbackError } = await supabase.from('games').update({ rating: newRating }).eq('id', gameId);
+          if (fallbackError) throw fallbackError;
+        }
+        toast.success("Rating submitted!");
+      } catch (err) {
+        console.error("Failed to update rating", err);
+      }
+    } else {
+      toast.success("Rating saved locally!");
+    }
+  };
   const adminUnlocked = user?.email === "azymar03@gmail.com";
 
   const [activeLegalTab, setActiveLegalTab] = useState<"privacy" | "terms" | "cookies" | "about" | "faq" | "contact" | null>(null);
@@ -3138,6 +3213,7 @@ export default function App() {
       {/* ── Login Modal ─────────────────────────────────────────────────────── */}
       <AnimatePresence>
         {showLogin && <LoginModal onClose={() => setShowLogin(false)} setUser={setUser} setShowAdmin={setShowAdmin} navigateTo={navigateTo} />}
+        {gameToRate && <RatingModal game={gameToRate} onClose={() => setGameToRate(null)} onSubmit={handleSubmitRating} />}
       </AnimatePresence>
 
       {/* ── Admin Panel Modal ────────────────────────────────────────────────── */}
@@ -3180,6 +3256,7 @@ export default function App() {
                     URL.revokeObjectURL(activePlayUrl);
                   }
                   setActivePlayUrl(null);
+                  setGameToRate(playingGame);
                   setPlayingGame(null);
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground border-2 border-black rounded-none text-xs font-black uppercase tracking-wider neo-btn neo-btn-hover cursor-pointer"
