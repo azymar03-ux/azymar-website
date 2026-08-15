@@ -9,7 +9,7 @@ import {
   Car, Compass, Puzzle, Swords, Music, Ghost,
   Building2, Globe, Joystick, Upload, ShieldCheck,
   Trash2, ToggleLeft, ToggleRight, Package, Eye, EyeOff,
-  CheckCircle2, AlertCircle, FolderOpen, Settings, Pencil
+  CheckCircle2, AlertCircle, FolderOpen, Settings, Pencil, Database
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { supabase } from "@/lib/supabaseClient";
@@ -580,6 +580,11 @@ function AdminPanel({
   const fileRef = useRef<HTMLInputElement>(null);
   const thumbnailRef = useRef<HTMLInputElement>(null);
 
+  const totalStorageMB = 1024; // 1GB limit
+  const usedStorageMB = 150 + (uploads.length * 25) + (dbGames.length * 15); // Mock calculation
+  const storageLeftMB = Math.max(0, totalStorageMB - usedStorageMB);
+  const storagePercent = Math.min(100, (usedStorageMB / totalStorageMB) * 100);
+
   const [editingItem, setEditingItem] = useState<{
     id: number;
     isDbGame: boolean;
@@ -932,9 +937,20 @@ function AdminPanel({
                   <p className="text-xs text-muted-foreground uppercase font-semibold">Game Upload Manager</p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 border-2 border-black bg-white text-black hover:bg-primary transition-colors cursor-pointer rounded-none">
-                <X size={18} />
-              </button>
+              <div className="flex items-center gap-4">
+                {/* Storage Section */}
+                <div className="hidden sm:flex flex-col items-end mr-2" title={`${usedStorageMB} MB / ${totalStorageMB} MB Used`}>
+                  <p className="text-[10px] font-black uppercase text-foreground mb-1">
+                    Storage: <span className={storageLeftMB < 100 ? "text-red-500" : "text-emerald-500"}>{storageLeftMB > 1000 ? (storageLeftMB / 1024).toFixed(1) + " GB" : storageLeftMB + " MB"} Left</span>
+                  </p>
+                  <div className="w-32 h-2.5 bg-neutral-800 border-2 border-black rounded-none overflow-hidden relative">
+                    <div className={`absolute top-0 left-0 h-full ${storagePercent > 90 ? "bg-red-500" : "bg-primary"}`} style={{ width: `${storagePercent}%` }}></div>
+                  </div>
+                </div>
+                <button onClick={onClose} className="p-2 border-2 border-black bg-white text-black hover:bg-primary transition-colors cursor-pointer rounded-none">
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             {/* Tabs */}
